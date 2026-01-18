@@ -12,20 +12,21 @@ import uuid
 from config import (
     ALPACA_API_KEY, ALPACA_SECRET_KEY, ALPACA_BASE_URL,
     DEFAULT_SYMBOL, RESULTS_DIR
-)\nfrom utils import setup_logger, format_currency, format_percentage
+)
+from utils import setup_logger, format_currency, format_percentage
 
 logger = setup_logger(__name__)
 
 class LiveCalibration:
-    \"\"\"Calibrate system performance with live market data\"\"\"
+    """Calibrate system performance with live market data"""
     
     def __init__(self, use_paper_trading: bool = True):
-        \"\"\"
+        """
         Initialize calibration module
         
         Args:
             use_paper_trading: Use paper trading (True) or simulation (False)
-        \"\"\"
+        """
         self.use_paper_trading = use_paper_trading
         self.trade_logs = []
         self.metrics = []
@@ -40,17 +41,17 @@ class LiveCalibration:
                     api_version='v2'
                 )
                 account = self.api.get_account()
-                logger.info(f\"✅ Connected to Alpaca! Cash: ${account.cash}\")
+                logger.info(f"✅ Connected to Alpaca! Cash: ${account.cash}")
                 self.connected = True
             except Exception as e:
-                logger.error(f\"❌ Failed to connect to Alpaca: {str(e)}\")
+                logger.error(f"❌ Failed to connect to Alpaca: {str(e)}")
                 self.connected = False
         else:
             self.connected = True
-            logger.info(\"Running in simulation mode\")
+            logger.info("Running in simulation mode")
     
     def get_market_data(self, symbol: str = DEFAULT_SYMBOL) -> dict:
-        \"\"\"
+        """
         Fetch latest market data
         
         Args:
@@ -58,7 +59,7 @@ class LiveCalibration:
             
         Returns:
             Dictionary with market data
-        \"\"\"
+        """
         start_time = time.time()
         
         if self.use_paper_trading and self.connected:
@@ -75,13 +76,13 @@ class LiveCalibration:
                     'source': 'live'
                 }
             except Exception as e:
-                logger.error(f\"Error fetching market data: {str(e)}\")
+                logger.error(f"Error fetching market data: {str(e)}")
                 return self._get_simulated_data()
         else:
             return self._get_simulated_data()
     
     def _get_simulated_data(self) -> dict:
-        \"\"\"Get simulated market data for testing\"\"\"
+        """Get simulated market data for testing"""
         import random
         
         start_time = time.time()
@@ -100,7 +101,7 @@ class LiveCalibration:
     
     def execute_test_trade(self, symbol: str = DEFAULT_SYMBOL,
                           side: str = 'buy') -> dict:
-        \"\"\"
+        """
         Execute a test trade and measure metrics
         
         Args:
@@ -109,7 +110,7 @@ class LiveCalibration:
             
         Returns:
             Dictionary with trade metrics
-        \"\"\"
+        """
         # Get market data
         data = self.get_market_data(symbol)
         expected_price = data['price']
@@ -138,7 +139,7 @@ class LiveCalibration:
                 exec_latency = (time.time() - start_exec) * 1000
                 
             except Exception as e:
-                logger.error(f\"Trade execution error: {str(e)}\")
+                logger.error(f"Trade execution error: {str(e)}")
                 filled_price = expected_price
                 exec_latency = (time.time() - start_exec) * 1000
         else:
@@ -171,7 +172,7 @@ class LiveCalibration:
     
     def run_calibration_cycle(self, symbol: str = DEFAULT_SYMBOL,
                              iterations: int = 5) -> list:
-        \"\"\"
+        """
         Run calibration cycle with multiple test trades
         
         Args:
@@ -180,14 +181,14 @@ class LiveCalibration:
             
         Returns:
             List of trade metrics
-        \"\"\"
-        logger.info(f\"\\n{'='*70}\")
-        logger.info(f\"Starting Live Calibration Cycle\")
-        logger.info(f\"Symbol: {symbol}, Iterations: {iterations}\")
-        logger.info(f\"{'='*70}\\n\")
+        """
+        logger.info(f"\\n{'='*70}")
+        logger.info(f"Starting Live Calibration Cycle")
+        logger.info(f"Symbol: {symbol}, Iterations: {iterations}")
+        logger.info(f"{'='*70}\\n")
         
-        print(f\"{'SIDE':<6} | {'EXP PRICE':<12} | {'FILL PRICE':<12} | {'SLIPPAGE':<10} | {'LATENCY':<10}\")
-        print(\"-\" * 70)
+        print(f"{'SIDE':<6} | {'EXP PRICE':<12} | {'FILL PRICE':<12} | {'SLIPPAGE':<10} | {'LATENCY':<10}")
+        print("-" * 70)
         
         for i in range(iterations):
             side = 'buy' if i % 2 == 0 else 'sell'
@@ -195,21 +196,21 @@ class LiveCalibration:
             
             self.trade_logs.append(result)
             
-            print(f\"{side.upper():<6} | {result['expected_price']:<12} | {result['filled_price']:<12} | \\\n                {result['slippage_abs']:<10} | {result['total_latency_ms']:<10}\")
+            print(f"{side.upper():<6} | {result['expected_price']:<12} | {result['filled_price']:<12} | \\\n                {result['slippage_abs']:<10} | {result['total_latency_ms']:<10}")
             
             time.sleep(1)  # Wait between trades
         
         return self.trade_logs
     
     def generate_calibration_report(self) -> dict:
-        \"\"\"
+        """
         Generate comprehensive calibration report
         
         Returns:
             Dictionary with report data
-        \"\"\"
+        """
         if not self.trade_logs:
-            logger.warning(\"No trade logs available\")
+            logger.warning("No trade logs available")
             return {}
         
         df = pd.DataFrame(self.trade_logs)
@@ -238,22 +239,22 @@ class LiveCalibration:
         
         # Assessment
         if avg_total_latency < 200:
-            assessment = \"✅ EXCELLENT: Latency within HFT acceptable range\"
+            assessment = "✅ EXCELLENT: Latency within HFT acceptable range"
         elif avg_total_latency < 500:
-            assessment = \"✅ GOOD: Latency acceptable for swing trading\"
+            assessment = "✅ GOOD: Latency acceptable for swing trading"
         elif avg_total_latency < 1000:
-            assessment = \"⚠️ WARNING: Latency acceptable for day trading\"
+            assessment = "⚠️ WARNING: Latency acceptable for day trading"
         else:
-            assessment = \"❌ CRITICAL: Latency too high, consider optimization\"
+            assessment = "❌ CRITICAL: Latency too high, consider optimization"
         
         if avg_slippage_pct < 0.05:
-            slippage_assessment = \"✅ EXCELLENT: Minimal slippage\"
+            slippage_assessment = "✅ EXCELLENT: Minimal slippage"
         elif avg_slippage_pct < 0.1:
-            slippage_assessment = \"✅ GOOD: Acceptable slippage\"
+            slippage_assessment = "✅ GOOD: Acceptable slippage"
         elif avg_slippage_pct < 0.2:
-            slippage_assessment = \"⚠️ WARNING: Moderate slippage\"
+            slippage_assessment = "⚠️ WARNING: Moderate slippage"
         else:
-            slippage_assessment = \"❌ CRITICAL: High slippage, consider limit orders\"
+            slippage_assessment = "❌ CRITICAL: High slippage, consider limit orders"
         
         report['assessment'] = assessment
         report['slippage_assessment'] = slippage_assessment
@@ -261,7 +262,7 @@ class LiveCalibration:
         return report
     
     def export_report(self, filename: str = None) -> str:
-        \"\"\"
+        """
         Export calibration report to CSV
         
         Args:
@@ -269,59 +270,59 @@ class LiveCalibration:
             
         Returns:
             Path to exported file
-        \"\"\"
+        """
         if not self.trade_logs:
-            logger.warning(\"No data to export\")
-            return \"\"
+            logger.warning("No data to export")
+            return ""
         
         if filename is None:
-            filename = f\"calibration_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv\"
+            filename = f"calibration_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
         
-        filepath = f\"{RESULTS_DIR}/{filename}\"
+        filepath = f"{RESULTS_DIR}/{filename}"
         
         df = pd.DataFrame(self.trade_logs)
         df.to_csv(filepath, index=False)
         
-        logger.info(f\"Report exported to {filepath}\")
+        logger.info(f"Report exported to {filepath}")
         
         return filepath
     
     def print_report(self):
-        \"\"\"Print calibration report to console\"\"\"
+        """Print calibration report to console"""
         report = self.generate_calibration_report()
         
         if not report:
             return
         
-        print(\"\\n\" + \"=\"*70)
-        print(\"📊 VANGUARD-ALPHA CALIBRATION REPORT\")
-        print(\"=\"*70)
-        print(f\"Timestamp: {report['timestamp']}\")
-        print(f\"Total Trades: {report['total_trades']}\")
-        print(f\"Source: {report['source']}\")
-        print(\"-\" * 70)
-        print(f\"Average Slippage: {format_currency(report['avg_slippage_abs'])} ({format_percentage(report['avg_slippage_pct']/100)})\")
-        print(f\"Average Network Latency: {report['avg_network_latency_ms']:.2f} ms\")
-        print(f\"Average Execution Latency: {report['avg_execution_latency_ms']:.2f} ms\")
-        print(f\"Average Total Latency: {report['avg_total_latency_ms']:.2f} ms\")
-        print(f\"Max Latency: {report['max_latency_ms']:.2f} ms\")
-        print(f\"Min Latency: {report['min_latency_ms']:.2f} ms\")
-        print(\"-\" * 70)
-        print(f\"Assessment: {report['assessment']}\")
-        print(f\"Slippage Assessment: {report['slippage_assessment']}\")
-        print(\"=\"*70 + \"\\n\")
+        print("\\n" + "="*70)
+        print("📊 VANGUARD-ALPHA CALIBRATION REPORT")
+        print("="*70)
+        print(f"Timestamp: {report['timestamp']}")
+        print(f"Total Trades: {report['total_trades']}")
+        print(f"Source: {report['source']}")
+        print("-" * 70)
+        print(f"Average Slippage: {format_currency(report['avg_slippage_abs'])} ({format_percentage(report['avg_slippage_pct']/100)})")
+        print(f"Average Network Latency: {report['avg_network_latency_ms']:.2f} ms")
+        print(f"Average Execution Latency: {report['avg_execution_latency_ms']:.2f} ms")
+        print(f"Average Total Latency: {report['avg_total_latency_ms']:.2f} ms")
+        print(f"Max Latency: {report['max_latency_ms']:.2f} ms")
+        print(f"Min Latency: {report['min_latency_ms']:.2f} ms")
+        print("-" * 70)
+        print(f"Assessment: {report['assessment']}")
+        print(f"Slippage Assessment: {report['slippage_assessment']}")
+        print("="*70 + "\\n")
 
 def main():
-    \"\"\"Main calibration routine\"\"\"
+    """Main calibration routine"""
     calibration = LiveCalibration(use_paper_trading=True)
     
     if not calibration.connected:
-        logger.warning(\"Falling back to simulation mode\")
+        logger.warning("Falling back to simulation mode")
         calibration = LiveCalibration(use_paper_trading=False)
     
     calibration.run_calibration_cycle(symbol='AAPL', iterations=5)
     calibration.print_report()
     calibration.export_report()
 
-if __name__ == \"__main__\":
+if __name__ == "__main__":
     main()
