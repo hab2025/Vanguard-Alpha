@@ -1,19 +1,64 @@
-alpaca-trade-api==3.2.0
-pandas==2.3.3
+# Vanguard-Alpha v2.0 Requirements
+# =================================
+
+# Core Dependencies
 numpy==2.4.1
-yfinance==0.2.32
-scikit-learn==1.3.2
-tensorflow==2.14.0
+pandas==2.3.3
+scipy==1.11.4
+
+# Machine Learning & AI
 torch==2.1.1
 transformers==4.35.2
+tensorflow==2.14.0
+scikit-learn==1.3.2
+
+# Reinforcement Learning
 stable-baselines3==2.2.1
 sb3-contrib==2.2.1
 gymnasium==0.29.1
+
+# Technical Analysis
+pandas-ta>=0.3.14b
+
+# Data & APIs
+yfinance==0.2.32
+alpaca-trade-api==3.2.0
+python-binance>=1.0.17
+websockets>=11.0.0
+
+# Backtesting & Analysis
 backtrader==1.9.94.122
+
+# Visualization
+matplotlib>=3.7.0
 plotly==5.18.0
+seaborn>=0.12.0
 dash==2.14.2
+
+# NLP & Sentiment Analysis
+textblob==0.17.1
+
+# Database
+sqlalchemy>=2.0.0
+
+# Utilities
+python-dotenv>=1.0.0
+pyyaml>=6.0
 requests==2.32.5
+aiohttp>=3.8.0
 python-dateutil==2.8.2
 pytz==2023.3.post1
-scipy==1.11.4
-textblob==0.17.1
+
+# Logging & Monitoring
+loguru>=0.7.0
+
+# Testing
+pytest>=7.3.0
+pytest-asyncio>=0.21.0
+
+# Development
+black>=23.3.0
+flake8>=6.0.0
+
+# Optional: GPU Support
+# torch-cuda>=2.0.0  # Uncomment if using CUDA

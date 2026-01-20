@@ -1,377 +1,125 @@
-# Vanguard-Alpha: Advanced AI-Powered Trading System
+# Vanguard-Alpha v2.0 - Institutional Grade AI Trading System
 
-A sophisticated algorithmic trading platform combining Deep Reinforcement Learning, sentiment analysis, and institutional-grade risk management for automated trading decisions.
-
-## Overview
-
-**Vanguard-Alpha** is an advanced trading system designed to bridge the gap between theoretical AI capabilities and practical trading execution. The system integrates multiple components:
-
-- **Intelligent Market Analysis**: Combines technical indicators with sentiment analysis
-- **Risk Management**: Monte Carlo simulations, position sizing, and correlation analysis
-- **Live Calibration**: Real-time performance measurement and optimization
-- **Paper Trading**: Test strategies without risking real capital
-
-## Features
-
-### 1. Market Data Processing
-- Real-time data fetching from multiple sources
-- Technical indicator calculation (SMA, EMA, RSI, MACD, Bollinger Bands)
-- Historical data analysis and caching
-
-### 2. Sentiment Analysis
-- Financial news processing
-- TextBlob-based sentiment analysis
-- FinBERT support for advanced NLP (optional)
-- Headline aggregation and scoring
-
-### 3. Trading Engine
-- Technical analysis-based signal generation
-- Sentiment-weighted decision making
-- Position management
-- Trade execution and tracking
-
-### 4. Risk Management
-- Dynamic position sizing
-- Volatility-adjusted risk
-- Monte Carlo simulations
-- Value at Risk (VaR) calculations
-- Correlation breakdown detection
-
-### 5. Live Calibration
-- Paper trading integration with Alpaca
-- Latency measurement
-- Slippage tracking
-- Performance reporting
-
-## Installation
-
-### Prerequisites
-- Python 3.9 or higher
-- pip package manager
-- Internet connection for market data
-
-### Setup
-
-1. **Clone the repository**
-```bash
-git clone https://github.com/yourusername/Vanguard-Alpha.git
-cd Vanguard-Alpha
-```
-
-2. **Create virtual environment**
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. **Install dependencies**
-```bash
-pip install -r requirements.txt
-```
-
-4. **Configure API keys** (optional for paper trading)
-```bash
-export ALPACA_API_KEY="your_api_key"
-export ALPACA_SECRET_KEY="your_secret_key"
-```
-
-## Quick Start
-
-### 1. Run Market Analysis
-```bash
-python main.py
-# Select option 1: Run Analysis
-# Enter symbol: AAPL
-```
-
-### 2. Execute Trading Strategy
-```bash
-python main.py
-# Select option 2: Execute Strategy
-# Enter symbol: AAPL
-```
-
-### 3. Run Live Calibration
-```bash
-python main.py
-# Select option 3: Run Calibration
-# Enter number of iterations: 5
-```
-
-### 4. Direct Module Usage
-```python
-from trading_engine import TradingEngine
-from data_fetcher import DataFetcher
-from sentiment_analyzer import SentimentAnalyzer
-
-# Initialize components
-engine = TradingEngine(initial_capital=100000)
-fetcher = DataFetcher()
-analyzer = SentimentAnalyzer()
-
-# Fetch data
-data = fetcher.fetch_historical_data('AAPL')
-
-# Analyze sentiment
-sentiment = analyzer.analyze_headlines(['AAPL reports strong earnings'])
-
-# Generate signal
-signal = engine.generate_signal('AAPL', data, sentiment['avg_polarity'])
-
-print(f"Signal: {signal['signal']}")
-print(f"Confidence: {signal['confidence']:.2%}")
-```
-
-## Project Structure
-
-```
-Vanguard-Alpha/
-├── __init__.py                 # Package initialization
-├── config.py                   # Configuration settings
-├── utils.py                    # Utility functions
-├── data_fetcher.py            # Market data fetching
-├── sentiment_analyzer.py       # Sentiment analysis
-├── risk_engine.py             # Risk management
-├── trading_engine.py          # Trading logic
-├── calibration.py             # Live calibration
-├── main.py                    # Main application
-├── requirements.txt           # Dependencies
-├── README.md                  # This file
-├── logs/                      # Log files
-├── results/                   # Output results
-├── models/                    # Trained models
-└── data/                      # Market data cache
-```
-
-## Configuration
-
-Edit `config.py` to customize system parameters:
-
-```python
-# Trading Parameters
-DEFAULT_SYMBOL = "AAPL"
-DEFAULT_CAPITAL = 100000.0
-RISK_PER_TRADE = 0.02  # 2% risk per trade
-STOP_LOSS_PCT = 0.05   # 5% stop loss
-
-# Market Data
-HISTORICAL_PERIOD = "60d"
-MARKET_DATA_INTERVAL = "15m"
-
-# Risk Management
-MONTE_CARLO_ITERATIONS = 10000
-VAR_CONFIDENCE_LEVEL = 0.99
-
-# API Configuration
-ALPACA_API_KEY = "your_key"
-ALPACA_SECRET_KEY = "your_secret"
-```
-
-## Usage Examples
-
-### Example 1: Basic Analysis
-```python
-from main import VanguardAlpha
-
-system = VanguardAlpha(initial_capital=100000)
-analysis = system.run_analysis('AAPL')
-
-print(f"Signal: {analysis['signal']['signal']}")
-print(f"Sentiment: {analysis['sentiment']['overall_sentiment']}")
-```
-
-### Example 2: Risk Management
-```python
-from risk_engine import RiskEngine
-import numpy as np
-
-risk_engine = RiskEngine(initial_capital=100000)
-
-# Calculate position size
-position_size = risk_engine.calculate_position_size(
-    entry_price=150,
-    stop_loss_price=142.5
-)
-
-# Monte Carlo simulation
-returns = np.random.normal(0.001, 0.02, 252)
-simulation = risk_engine.monte_carlo_simulation(returns)
-
-print(f"VaR 99%: ${simulation['var_99']:.2f}")
-print(f"Position Size: {position_size} shares")
-```
-
-### Example 3: Live Calibration
-```python
-from calibration import LiveCalibration
-
-calibration = LiveCalibration(use_paper_trading=True)
-calibration.run_calibration_cycle(symbol='AAPL', iterations=5)
-calibration.print_report()
-```
-
-## Performance Metrics
-
-The system tracks and reports:
-
-- **Sharpe Ratio**: Risk-adjusted returns
-- **Sortino Ratio**: Downside risk-adjusted returns
-- **Maximum Drawdown**: Largest peak-to-trough decline
-- **Win Rate**: Percentage of profitable trades
-- **Calmar Ratio**: Return relative to maximum drawdown
-- **Latency**: System response time
-- **Slippage**: Price difference between expected and actual execution
-
-## Calibration Results
-
-After running calibration, the system provides:
-
-```
-Average Slippage: $0.0234 (0.0156%)
-Average Network Latency: 45.23 ms
-Average Execution Latency: 123.45 ms
-Average Total Latency: 168.68 ms
-
-Assessment: ✅ GOOD: Latency acceptable for swing trading
-```
-
-## API Integration
-
-### Alpaca Markets (Paper Trading)
-The system integrates with Alpaca Markets for paper trading:
-
-1. Create account at https://alpaca.markets
-2. Get API keys from dashboard
-3. Set environment variables or update config.py
-4. Run calibration to test connection
-
-### Data Sources
-- **yfinance**: Historical and real-time market data
-- **Alpaca API**: Paper trading execution
-- **News APIs**: Financial news (via yfinance)
-
-## Advanced Features
-
-### 1. Sentiment Analysis with FinBERT
-Enable advanced NLP analysis:
-```python
-analyzer = SentimentAnalyzer(use_finbert=True)
-```
-
-### 2. Custom Technical Indicators
-Add custom indicators in `data_fetcher.py`:
-```python
-def _calculate_indicators(self, data):
-    # Add your custom indicators here
-    data['Custom_Indicator'] = ...
-    return data
-```
-
-### 3. Strategy Backtesting
-Use the risk engine for historical analysis:
-```python
-from risk_engine import RiskEngine
-import pandas as pd
-
-risk_engine = RiskEngine(100000)
-portfolio_returns = pd.Series([...])  # Your returns
-metrics = risk_engine.calculate_portfolio_metrics(portfolio_returns)
-```
-
-## Troubleshooting
-
-### Connection Issues
-```
-Error: Failed to connect to Alpaca
-Solution: Check API keys and internet connection
-```
-
-### Data Fetch Errors
-```
-Error: No data found for symbol
-Solution: Verify symbol is valid (e.g., AAPL, MSFT)
-```
-
-### High Latency
-```
-Warning: Latency too high
-Solution: Check internet connection, disable VPN, reduce data frequency
-```
-
-## Performance Targets
-
-The system aims for:
-
-- **Sharpe Ratio**: > 1.5
-- **Win Rate**: > 55%
-- **Maximum Drawdown**: < 15%
-- **Calmar Ratio**: > 1.0
-- **Latency**: < 200ms for HFT, < 500ms for swing trading
-
-## Limitations
-
-- **Paper Trading Only**: Current implementation uses paper trading (no real money)
-- **Single Symbol**: Designed for single-symbol analysis (multi-symbol support coming)
-- **Sentiment Bias**: Relies on news availability and quality
-- **Market Hours**: Optimized for US market hours
-
-## Future Enhancements
-
-- [ ] Multi-asset portfolio support
-- [ ] Graph Neural Networks for correlation analysis
-- [ ] Deep Reinforcement Learning agent training
-- [ ] Backtesting engine with walk-forward analysis
-- [ ] Real-time dashboard with Plotly/Dash
-- [ ] C++/Rust execution layer for HFT
-- [ ] Machine learning model persistence
-- [ ] Advanced risk hedging strategies
-
-## Contributing
-
-Contributions are welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
-
-## License
-
-MIT License - see LICENSE file for details
-
-## Disclaimer
-
-**IMPORTANT**: This system is for educational and research purposes only. It is not financial advice. Trading involves substantial risk of loss. Past performance is not indicative of future results. Always conduct your own research and consult with a financial advisor before trading.
-
-## Support
-
-For issues, questions, or suggestions:
-- Create an issue on GitHub
-- Check existing documentation
-- Review logs in `logs/` directory
-
-## Authors
-
-- **Manus AI** - Initial development and architecture
-
-## Acknowledgments
-
-- Alpaca Markets for trading API
-- Yahoo Finance for market data
-- Hugging Face for NLP models
-- OpenAI for language models
-
-## Version History
-
-### v1.0.0 (Current)
-- Initial release
-- Core trading engine
-- Risk management system
-- Live calibration module
-- Sentiment analysis
-- Paper trading support
+**Vanguard-Alpha v2.0** is an institutional-grade, fully integrated, and AI-powered trading system designed for professional performance and reliability. This version represents a quantum leap from its predecessor, incorporating a sophisticated architecture, advanced machine learning models, and a robust risk management framework.
 
 ---
 
-**Last Updated**: January 2026
-**Status**: Active Development
+## ✨ Key Features
+
+| Feature | Description |
+|:---|:---|
+| **🧠 Trading Brain** | A master orchestrator that centralizes decision-making, risk management, and state analysis. |
+| **🤖 Advanced AI Engine** | Utilizes a **Transformer** model for price prediction and a **PPO (Proximal Policy Optimization)** agent for decision-making. |
+| **🛡️ Pro Risk Engine** | Implements **9 critical pre-trade checks**, including latency, drawdown, and rate limiting. |
+| **📊 Feature Engineering** | Extracts over **20 advanced features**, including momentum, volatility, and volume indicators. |
+| **📈 Pro Backtesting** | Features **Walk-Forward Analysis** and **Monte Carlo Simulation** for robust strategy validation. |
+| **🔬 Stress Testing** | Includes **5 critical stress test scenarios** to ensure system resilience under extreme market conditions. |
+| **👁️ Real-time Monitoring** | Provides a live dashboard with alerts and performance tracking. |
+| **🔌 Modular & Integrated** | All components are designed to work together seamlessly in a fully integrated system. |
+
+---
+
+## 🏗️ System Architecture
+
+The system is built on a modular, microservice-ready architecture that separates concerns and enhances scalability.
+
+```mermaid
+graph TD
+    subgraph Data Layer
+        A[Live Data Feed] -- Tick Data --> B
+    end
+    subgraph Decision Layer
+        B(Trading Brain)
+        C[Advanced AI Engine] -- AI Signal --> B
+    end
+    subgraph Risk & Execution
+        B -- Trade Order --> D{Pro Risk Engine}
+        D -- OK --> E[Execution Service]
+    end
+    subgraph Persistence & Monitoring
+        E -- Trade Confirmation --> F(Database)
+        B -- System State --> F
+        G[Real-time Monitor] --> B
+        G --> E
+        G --> F
+    end
+```
+
+For a detailed architecture diagram and explanation, see **[ARCHITECTURE.md](ARCHITECTURE.md)**.
+
+---
+
+## 🚀 Quick Start
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/hab2025/Vanguard-Alpha.git
+cd Vanguard-Alpha
+```
+
+### 2. Create Virtual Environment & Install Dependencies
+```bash
+# Create a virtual environment
+python -m venv venv
+
+# Activate it
+source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+
+# Install all required packages
+pip install -r requirements.txt
+```
+
+### 3. Configure the System (Optional)
+API keys for live trading are configured in `trading_brain.py` within the `SystemConfig` dataclass. For paper trading, you can use the default Alpaca URL.
+
+### 4. Run the Integrated System
+```bash
+python integrated_system.py
+```
+
+You will be presented with a menu to choose between:
+1.  **Run Stress Tests**
+2.  **Run Live Trading (Simulated)**
+3.  **Run Backtest**
+4.  **Show System Status**
+5.  **Exit**
+
+---
+
+## ⚙️ Project Structure
+
+```
+Vanguard-Alpha/
+├── .github/                  # GitHub templates
+├── v2_upgrade/               # Staging for new components
+├── __init__.py
+├── integrated_system.py      # << MAIN ENTRY POINT (v2.0)
+├── trading_brain.py          # << Core orchestrator (v2.0)
+├── advanced_ai_engine.py     # << Transformer + PPO (v2.0)
+├── pro_backtesting_engine.py # << Walk-forward + MC (v2.0)
+├── stress_test_monitor.py    # << Stress tests & monitoring (v2.0)
+├── requirements.txt          # System dependencies
+├── README.md                 # This file
+├── ARCHITECTURE.md           # System architecture details
+├── logs/                     # Log files
+├── results/                  # Output results (e.g., charts)
+└── ... (other documentation files)
+```
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read our **[CONTRIBUTING.md](CONTRIBUTING.md)** for guidelines on how to submit pull requests, report issues, and suggest features.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License. See the **[LICENSE](LICENSE)** file for details.
+
+---
+
+## ⚠️ Disclaimer
+
+**IMPORTANT**: This system is for educational and research purposes only. It is **not** financial advice. Trading involves substantial risk of loss. Past performance is not indicative of future results. Always conduct your own research and consult with a financial advisor before trading with real capital.
